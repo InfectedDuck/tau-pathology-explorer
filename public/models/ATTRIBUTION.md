@@ -1,97 +1,98 @@
 # 3D model attribution
 
-## `brain-atlas/brain.glb` + `manifest.json` (Box 3 — Whole brain, live)
+Every model the app loads, where it came from, and the licence it carries.
+The same credits are shown in the app under **Menu → Model credits**.
+The app's own code does not relicense any of these files.
 
-- Source: `itayinbarr/brainproject` brain atlas, derived from Z-Anatomy / BodyParts3D —
-  https://github.com/itayinbarr/brainproject
-- License: Creative Commons Attribution-ShareAlike 4.0 International (CC BY-SA 4.0),
-  © Z-Anatomy contributors and BodyParts3D / DBCLS. Share-alike: keep this notice
-  with the model; the app's own code license does not relicense the mesh.
-- This file: 437 named anatomical meshes (cortex gyri, thalamic nuclei, hypothalamus
-  zones, amygdala groups, hippocampi, ventricles, cerebellum, brainstem…), vendored
-  verbatim for offline-first use. Region selection reads the GLB `bx_id` extras
-  matched against the manifest; only vessels/nerves/tracts/meninges/white-matter
-  stay hidden. Required credit is shown in the app footer.
-- Replaces the previous `brain.glb` (BodyParts3D subset), which is no longer loaded
-  by the app but kept in `public/models/` for reference.
+Cell shapes and protein structures are research data. How they are arranged,
+coloured and animated through the disease stages is a teaching model.
 
-## `neuron-pk.glb` (Box 2 — tissue cells, Box 1 — neighbor neuron)
+## Cells — `cells/*.json`
 
-- Source: NIH 3D Print Exchange, entry 3DPX-000786 "Cerebellum - Santiago Ramón y Cajal
-  Exhibit", Purkinje neuron part by Biovisualization LLC —
-  https://3d.nih.gov/entries/3DPX-000786 (output file `11322-Purkinje-neuron-part1_NIH3D.glb`)
-- License: Creative Commons Attribution-ShareAlike (CC-BY-SA). Credit the Cajal
-  Institute / Biovisualization LLC as the entry requires; required credit is shown
-  in the app footer.
-- This file: real scan-derived Purkinje cell mesh (~19k triangles), vendored verbatim.
-  Box 2 instances it 48× in a single draw call (Eco mode keeps the procedural proxy).
-  Box 1 shows it faintly as the neighbor neuron receiving the tau seed.
+Branch trees converted from SWC reconstructions on
+[NeuroMorpho.Org](https://neuromorpho.org) (RRID:SCR_002145), licensed
+**CC BY 4.0**. The app builds tube meshes from them at runtime.
 
-## `neuron-nih.glb` (Box 1 — hero neuron body)
+| File | NeuroMorpho ID | What | Original paper |
+| --- | --- | --- | --- |
+| `ca1-hero.json` | [147158](https://neuromorpho.org/neuron_info.jsp?neuron_id=147158) | Human hippocampal CA1 pyramidal neuron (Box 1) | Benavides-Piccione et al. 2020 |
+| `ca1-a.json` | [147067](https://neuromorpho.org/neuron_info.jsp?neuron_id=147067) | Human CA1 pyramidal neuron (Box 2) | Benavides-Piccione et al. 2020 |
+| `ca1-b.json` | [147060](https://neuromorpho.org/neuron_info.jsp?neuron_id=147060) | Human CA1 pyramidal neuron (Box 2) | Benavides-Piccione et al. 2020 |
+| `ca1-c.json` | [147087](https://neuromorpho.org/neuron_info.jsp?neuron_id=147087) | Human CA1 pyramidal neuron (Box 2) | Benavides-Piccione et al. 2020 |
+| `astrocyte.json` | [189671](https://neuromorpho.org/neuron_info.jsp?neuron_id=189671) | Human cortical astrocyte (Box 2) | O'Leary et al. 2020 |
+| `microglia-a.json` | [301526](https://neuromorpho.org/neuron_info.jsp?neuron_id=301526) | Human cortical microglia (Box 2) | Yoblinski et al. 2025 |
+| `microglia-b.json` | [301542](https://neuromorpho.org/neuron_info.jsp?neuron_id=301542) | Human cortical microglia (Box 2) | Yoblinski et al. 2025 |
 
-- Source: NIH 3D Print Exchange, entry 3DPX-015796 "Neuron" by destacados tv —
-  https://3d.nih.gov/entries/3DPX-015796
-- License: Creative Commons Attribution-NonCommercial-ShareAlike 4.0 (CC-BY-NC-SA 4.0).
-  NonCommercial: fine for this educational app, but the mesh (and this app's distribution
-  with it) is not cleared for commercial reuse. ShareAlike: keep this credit + license
-  note if you remix or redistribute the mesh.
-- This file: NIH workflow GLB output (2,885,524 bytes), vendored here verbatim via the
-  `cell-architecture-studio` project's mirror for offline-first use.
-- Modifications in this app: none to the mesh itself. Rendered with a neutral teaching
-  tint; tau/microtubule/transport overlays (Box 1) and per-cell state colors (Box 2)
-  are app overlays. Box 2 renders 48 GPU-instanced copies in a single draw call.
-- Required credit is shown in the app footer ("Neuron mesh: destacados tv via NIH 3D, CC-BY-NC-SA 4.0").
+Citations:
 
-## Recommended higher-quality drop-in upgrades (researched Nov 2026, not vendored yet)
+- Benavides-Piccione R, Regalado-Reyes M, Fernaud-Espinosa I, et al.
+  Differential structure of hippocampal CA1 pyramidal neurons in the human and
+  mouse. *Cereb Cortex* 2020;30:730–752. doi:10.1093/cercor/bhz122
+- O'Leary LA, Davoli MA, Belliveau C, et al. Characterization of
+  vimentin-immunoreactive astrocytes in the human brain. *Front Neuroanat*
+  2020;14:31. doi:10.3389/fnana.2020.00031
+- Yoblinski AR, Dubey J, Myers T, et al. Brain region and sex differences in
+  human microglia morphology and function. *Cereb Cortex* 2025;35:bhaf120.
+  doi:10.1093/cercor/bhaf120
+- Tecuatl C, Ljungquist B, Ascoli GA. Accelerating the continuous community
+  sharing of digital neuromorphology data. *FASEB BioAdv* 2024;6:207–221.
+  doi:10.1096/fba.2024-00048
 
-All are free for education and keep the app's offline-first pattern: download once,
-drop into `public/models/`, the viewers auto-use them with procedural fallback.
+Changes made: multi-point somata collapsed to one point; cells re-centred on
+the soma and rotated so the apical dendrite points up; each unbranched section
+simplified (Ramer–Douglas–Peucker, 0.2–1.4 µm tolerance); coordinates stored
+at 0.1 µm precision. In the app, thin branches are drawn at a minimum
+on-screen width and trunks are flared slightly where they meet the cell body.
+The CA1 axons end where they left the tissue slice.
 
-### Brain / deep structures (replaces sphere hotspots)
+## Molecules — `molecules/tubulin.glb`, `molecules/molecules.json`
 
-1. **HRA brain female/male v1.3 — 141 structures, CC-BY 4.0 (best pick)**
-   - `3DPX-020959` (female) / `3DPX-020960` (male), HRA / Allen atlas, mirrored whole brain.
-   - https://3d.nih.gov/entries/20959 — `hra-reference-organ-brain-female-v1.3.glb`
-   - Why: single GLB, commercial-safe CC-BY, includes hypothalamus + thalamus +
-     amygdala + hippocampus + ventricles as named nodes. Ideal `brain-hra.glb`.
-2. **Subcortical set — hippocampus + amygdala + thalamus + striatum + brainstem, CC-BY-NC-SA**
-   - `3DPX-001944` by Roman Kessler (FSL FIRST segmentation of T1 MRI).
-   - https://3d.nih.gov/entries/3DPX-001944
-   - Why: exactly the deep parts this app teaches (incl. hypothalamus neighbours).
-     Split per-structure or load whole `subcortical.glb` as overlay.
-3. **PittBrains3D subcortical forebrain STLs — thalamus / striatum / hippocampus+amygdala / ventricles, CC-BY**
-   - MNI152-average based teaching models, GitHub STL set.
-   - https://oercommons.org/courseware/lesson/123307/overview
-   - Why: clean, low-poly, permissive license; convert STL → GLB once.
-4. **BodyParts3D full-res 4.3 — thalamus / hypothalamus / amygdala / insula as single OBJs**
-   - `body_parts_3d_api` (3,210 meshes, `brain` group = 64 meshes) + official archive
-     `isa_BP3D_4.0_obj_99.zip`.
-   - Why: same source family as current `brain.glb`, so style matches; pick
-     FJ hypothalamus + thalamus + amygdala elements and merge into `brain-deep.glb`.
-   - Sketchfab/AnatomyTOOL mirrors show the limbic assembly working:
-     limbic system (hippocampus + hypothalamus + mammillary + pituitary),
-     internal brain structures (hippocampus + amygdala + ventricles).
-5. **Detailed Human Brain Model 3DPX-021161 — CC-BY**
-   - https://3d.nih.gov/entries/3DPX-021161 — dense display mesh for hero view.
+Derived from [RCSB Protein Data Bank](https://www.rcsb.org) entries, which
+are in the public domain (**CC0 1.0**).
 
-### Cell / synapse (replaces any remaining procedural blobs)
+| PDB | Used for | Original paper |
+| --- | --- | --- |
+| [5O3L](https://www.rcsb.org/structure/5O3L) | Paired helical filament of tau from Alzheimer's disease brain | Fitzpatrick et al. *Nature* 2017;547:185–190. doi:10.1038/nature23002 |
+| [6DPV](https://www.rcsb.org/structure/6DPV) | α/β-tubulin subunits and microtubule lattice | Zhang, LaFrance & Nogales. *PNAS* 2018;115:E6191–E6200. doi:10.1073/pnas.1802637115 |
+| [7PQC](https://www.rcsb.org/structure/7PQC) | Tau (residues 202–395) bound along a protofilament | Brotzakis et al. *ACS Cent Sci* 2021;7:1986–1995. doi:10.1021/acscentsci.1c00585 |
 
-6. **Enlarged synapse model — CC0 (free, no attribution needed)**
-   - Innerscene 3D Parts Library: `enlarged-synapse-model.glb`.
-   - https://www.innerscene.com/tools/library/3d-parts/enlarged-synapse-model-49ebf432
-   - Why: presynaptic terminal + vesicles + cleft + postsynaptic receptors as one
-     GLB. Ideal `synapse-cc0.glb` for Box 1 terminals.
-7. **Neuron cell-body anatomy — check license before vendoring**
-   - embodi3D `3D Model of Neuron Cell Body Anatomy` / `3D Model of Synapse`
-     (GLB+USDZ+STL, paid). Preview-quality only; prefer NIH/CC0 above unless
-     the licence is cleared.
+What was computed from them:
 
-### How to wire a new GLB in (no code change needed for the first two)
+- **Tubulin**: Gaussian molecular surfaces of one α and one β monomer (chains
+  A and B of 6DPV) at two levels of detail.
+- **Microtubule lattice**: lateral and longitudinal spacing measured by
+  superposing neighbouring chains in 6DPV. That entry is a 14-protofilament
+  tube; the app rebuilds the 13-protofilament, 3-start lattice found in
+  neurons from the same subunits.
+- **Tau on the microtubule**: C-alpha trace of chain O, model 1 of 7PQC, drawn
+  as a tube. Phosphate markers sit on residues 202, 205, 212, 214, 217, 231,
+  235, 262 and 356.
+- **Paired helical filament**: C-alpha traces of one rung (chains A and B of
+  5O3L). The filament is extended with the helical symmetry measured from the
+  entry: −1.20° twist and 4.72 Å rise per rung, a crossover of about 71 nm.
 
-- `public/models/brain-hra.glb` → set `BRAIN_URL` in `OrganView.tsx`
-  (region nodes matched by name: hippocampus / amygdala / thalamus / hypothalamus).
-- `public/models/subcortical.glb` → deep-structure overlay (already supported by
-  the `BrainModelBoundary` + organic-fallback pattern).
-- `public/models/synapse-cc0.glb` → bouton overlay in `CellularView.tsx`.
+## Brain — `brain-atlas/brain-core.glb`, `brain-atlas/brain-extras.glb`
 
-Application code under its own license does not relicense the models.
+- Source: the `itayinbarr/brainproject` brain atlas, derived from Z-Anatomy
+  and BodyParts3D — https://github.com/itayinbarr/brainproject
+- Licence: **CC BY-SA 4.0**. © Z-Anatomy contributors and BodyParts3D,
+  Database Center for Life Science (DBCLS). Share-alike: these two files stay
+  under CC BY-SA 4.0.
+- Changes made: the 437-structure atlas was split into a core file (cortex,
+  deep grey matter, diencephalon, ventricles, cerebellum, brainstem — 262
+  structures) and an extras file loaded on demand (arteries, veins, fibre
+  tracts, cranial nerves — 163 structures). Meninges and the white-matter
+  volume were left out. Cerebellum, brainstem, vessels, nerves and tracts were
+  simplified to 30–70% of their triangles. Other meshes are unchanged.
+- `brain-atlas/manifest.json` lists the original structure names and is used
+  by the tests.
+
+## Rebuilding the files
+
+```bash
+python scripts/build_models.py            # cells + molecules (needs numpy)
+node scripts/split_brain_atlas.mjs models-src/brain-atlas-full.glb public/models/brain-atlas
+```
+
+Source files are cached in `models-src/` (not deployed). Earlier models that
+the app no longer loads are kept in `models-src/legacy/`.

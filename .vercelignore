@@ -1,0 +1,12 @@
+# Not needed to build or serve the site
+backend
+docker
+models-src
+.backup
+.github
+dist
+node_modules
+Dockerfile.frontend
+docker-compose.yml
+nginx.conf
+*.log

@@ -1,16 +1,24 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-theme="dark" style="color-scheme: dark">
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="manifest" href="/manifest.webmanifest" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-    <meta name="theme-color" content="#0e7490" />
-    <meta name="description" content="Tau Pathology Explorer — interactive 3D visualization of tau tangles in Alzheimer's disease" />
-    <meta property="og:title" content="Tau Pathology Explorer — Alzheimer's 3D" />
-    <meta property="og:description" content="Neuron → tissue → brain: how tau tangles spread by Braak stage. For undergraduate medical students." />
+    <meta name="theme-color" content="#05080f" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="Tau Explorer" />
+    <meta name="description" content="Interactive 3D explorer of tau pathology in Alzheimer's disease: a real human neuron, hippocampal tissue and the whole brain, from molecules to Braak stages." />
+    <meta property="og:title" content="Tau Pathology Explorer — Alzheimer's in 3D" />
+    <meta property="og:description" content="Zoom from the whole brain down to the tau filament. Real neuron reconstructions and cryo-EM structures, with a Braak-stage timeline." />
     <meta property="og:type" content="website" />
-    <title>Tau Pathology Explorer — Alzheimer's 3D</title>
+    <title>Tau Pathology Explorer — Alzheimer's in 3D</title>
+    <style>
+      /* first paint matches the app shell, so there is no white flash while the bundle loads */
+      html, body { margin: 0; background: #05080f; }
+    </style>
   </head>
   <body>
     <div id="root"></div>

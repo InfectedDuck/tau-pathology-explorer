@@ -1,11 +1,11 @@
 {
   "name": "Tau Pathology Explorer",
   "short_name": "Tau Explorer",
-  "description": "Interactive 3D visualization of tau tangles in Alzheimer's disease for medical students.",
+  "description": "Interactive 3D explorer of tau pathology in Alzheimer's disease, from molecules to the whole brain.",
   "start_url": ".",
   "display": "standalone",
-  "background_color": "#070b14",
-  "theme_color": "#0e7490",
+  "background_color": "#05080f",
+  "theme_color": "#05080f",
   "icons": [
     {
       "src": "favicon.svg",
@@ -13,5 +13,6 @@
       "type": "image/svg+xml",
       "purpose": "any"
     }
-  ]
+  ],
+  "orientation": "any"
 }
