@@ -24,7 +24,10 @@ EXPECTED_REGION_IDS = [
     "thalamus",
     "hypothalamus",
 ]
-EXPECTED_CELL_IDS = ["tau", "microtubule", "mitochondrion", "synapse", "tangle"]
+EXPECTED_CELL_IDS = [
+    "tau", "microtubule", "mitochondrion", "synapse", "tangle",
+    "soma", "dendrite", "spine", "axon", "motor", "tubulin", "phosphate", "phf", "neuron", "astrocyte", "microglia",
+]
 
 
 def test_stages_match_frontend_canonical():

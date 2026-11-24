@@ -35,11 +35,17 @@ describe('content data', () => {
     }
   })
 
-  it('has 5 cell parts with full copy', () => {
-    expect(Object.keys(CELL_PARTS)).toEqual(['tau', 'microtubule', 'mitochondrion', 'synapse', 'tangle'])
-    for (const p of Object.values(CELL_PARTS)) {
-      expect(p.role.length).toBeGreaterThan(10)
-      expect(p.clinical.length).toBeGreaterThan(10)
+  it('has 16 parts with full copy (the original 5 first)', () => {
+    expect(Object.keys(CELL_PARTS)).toEqual([
+      'tau', 'microtubule', 'mitochondrion', 'synapse', 'tangle',
+      'soma', 'dendrite', 'spine', 'axon', 'motor', 'tubulin', 'phosphate', 'phf', 'neuron', 'astrocyte', 'microglia',
+    ])
+    for (const [id, p] of Object.entries(CELL_PARTS)) {
+      expect(p.id, id).toBe(id)
+      expect(p.short.length, id).toBeGreaterThan(1)
+      expect(p.role.length, id).toBeGreaterThan(10)
+      expect(p.wrong.length, id).toBeGreaterThan(10)
+      expect(p.clinical.length, id).toBeGreaterThan(10)
     }
   })
 

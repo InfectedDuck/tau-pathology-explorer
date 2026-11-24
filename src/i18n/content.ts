@@ -124,6 +124,102 @@ const TR_CELLS: Record<string, { name: string; role: string; wrong: string; clin
   },
 }
 
+/** Turkish short labels for every part, and full copy for the parts added with the real 3D models. */
+const TR_CELLS_EXTRA: Record<string, Partial<{ name: string; short: string; role: string; wrong: string; clinical: string }>> = {
+  tau: {
+    short: 'Tau',
+  },
+  microtubule: {
+    short: 'Mikrotübüller',
+  },
+  mitochondrion: {
+    short: 'Mitokondri',
+  },
+  synapse: {
+    short: 'Sinaps',
+  },
+  tangle: {
+    short: 'Yumak',
+  },
+  soma: {
+    name: 'Hücre gövdesi (soma)',
+    short: 'Hücre gövdesi',
+    role: 'Çekirdeği ve protein üretim mekanizmasını barındırır; dendritlerden gelen sinyalleri toplar.',
+    wrong: 'Yanlış katlanmış tau aksonu terk edip burada ve dendritlerde birikir. Filamentler sitoplazmayı doldurur ve çekirdeği kenara iter.',
+    clinical: 'Piramidal hücre gövdelerindeki alev biçimli yumaklar, nöropatoloğun Braak evresini belirlerken saydığı yapılardır.',
+  },
+  dendrite: {
+    name: 'Dendritler',
+    short: 'Dendritler',
+    role: 'Dallanan giriş kabloları. Bir CA1 piramidal nöronunda uzun bir apikal ağaç ve binlerce sinaptik girdi toplayan bazal dendritler bulunur.',
+    wrong: 'Tau dendritlere girer, taşıma bozulur ve dallar uçlardan içeri doğru geri çekilir; ağaç küçülür ve girdilerini yitirir.',
+    clinical: 'Dendritlerin sadeleşmesi, nöron ölmeden çok önce hipokampal bellek devresinin bağlantısını koparır.',
+  },
+  spine: {
+    name: 'Dendritik dikenler',
+    short: 'Dikenler',
+    role: 'Yaklaşık 1 µm uzunluğunda küçük çıkıntılar; her biri bir uyarıcı sinaps taşır. Anılar oluşurken büyür ve küçülürler.',
+    wrong: 'Yanlış yere giden tau, dikendeki reseptör trafiğini bozar. Dikenler seyrelir ve kaybolur.',
+    clinical: 'Diken ve sinaps kaybı, bellek gerilemesini en yakından izleyen yapısal değişikliktir.',
+  },
+  axon: {
+    name: 'Akson',
+    short: 'Akson',
+    role: 'Tek çıkış kablosu. Tau normalde burada yoğunlaşır ve uzun mesafeli taşıma için mikrotübül raylarını stabil tutar.',
+    wrong: 'Tau bıraktığında raylar kararsızlaşır, kargo durur ve akson uç kısmından hücre gövdesine doğru dejenere olur.',
+    clinical: 'Akson hasarı, süregelen nörodejenerasyonun kan belirteci olan nörofilament hafif zincirini (NfL) açığa çıkarır.',
+  },
+  motor: {
+    name: 'Motor proteinler ve kargo',
+    short: 'Motorlar + kargo',
+    role: 'Kinezin kargoyu sinapsa doğru yürütür, dinein geri taşır; mikrotübüller üzerinde adım atarken ATP harcarlar.',
+    wrong: 'Ayrılmış tau ve kırık raylar motorlara yürüyecek yol bırakmaz. Veziküller trafik sıkışıklığı gibi birikir.',
+    clinical: 'Durmuş kargoyla dolu aksonal şişlikler, Alzheimer dokusunda ve fare modellerinde erken bir bulgudur.',
+  },
+  tubulin: {
+    name: 'Tübülin kafesi',
+    short: 'Tübülin',
+    role: 'α- ve β-tübülin dimerler oluşturur; bunlar 13 protofilament halinde dizilerek 25 nm çapında içi boş bir tüp yapar.',
+    wrong: 'Kafesi bir arada tutan tau olmayınca protofilamentler uçlardan ayrılır ve tüp kısalır.',
+    clinical: 'Mikrotübül stabilize edici ilaçlar, kaybolan tau işlevini telafi etmek için denenmiştir.',
+  },
+  phosphate: {
+    name: 'Fosforilasyon bölgeleri',
+    short: 'Fosfatlar',
+    role: 'Kinazlar ve fosfatazlar, tau’nun mikrotübülü ne kadar sıkı tuttuğunu ayarlamak için birkaç fosfat grubu ekler ve çıkarır.',
+    wrong: 'Alzheimer’da tau normalin yaklaşık üç-dört katı fosfat taşır. Fazladan negatif yük onu mikrotübülden iter.',
+    clinical: 'Treonin 181 veya 217’den fosforile tau (p-tau181, p-tau217), Alzheimer patolojisini saptamak için BOS ve kanda ölçülür.',
+  },
+  phf: {
+    name: 'Çift helikal filament',
+    short: 'Tau filamenti',
+    role: 'Normal rolü yok. Yanlış katlanmış tau’dan oluşan iki protofilament birbirine dolanır; her molekül C şeklinde katlanır ve bir sonrakinden 0,47 nm uzakta istiflenir.',
+    wrong: 'Filamentin ucu kalıp görevi görür. Serbest tau aynı katlanmayı alıp eklenir; filamentler uzar ve yumaklar halinde demetlenir.',
+    clinical: 'Flortaucipir gibi tau PET izleyicileri bu filamentlere bağlanır; böylece yumak yayılımı yaşayan hastalarda görüntülenebilir.',
+  },
+  neuron: {
+    name: 'Piramidal nöron',
+    short: 'Nöronlar',
+    role: 'Hipokampus ve korteksin başlıca uyarıcı hücresi. Hücre gövdeleri bir tabaka halinde dizilir, apikal dendritler paralel uzanır.',
+    wrong: 'Yumak taşıyan nöronlar dendritlerini ve sinapslarını kaybeder, sonra ölür ve tabakada boşluklar bırakır.',
+    clinical: 'CA1 ve entorinal korteksteki nöron kaybı, bellek bozukluğunun şiddetiyle paralel gider.',
+  },
+  astrocyte: {
+    name: 'Astrosit',
+    short: 'Astrositler',
+    role: 'Yıldız biçimli destek hücresi. İnce uzantıları sinapsları sarar, nörotransmitteri geri dönüştürür ve nöronları besler.',
+    wrong: 'Hasarın yakınında astrositler reaktif hale gelir: uzantılar kalınlaşır, GFAP artar ve normal destek işlevleri aksar.',
+    clinical: 'Plazma GFAP düzeyi Alzheimer’da erken yükselir ve astrosit reaktivitesinin belirteci olarak kullanılır.',
+  },
+  microglia: {
+    name: 'Mikroglia',
+    short: 'Mikroglia',
+    role: 'Beynin yerleşik bağışıklık hücreleri. İnce, sürekli hareket eden dalları dokuyu hasara karşı tarar.',
+    wrong: 'Dallarını geri çeker, şişer ve yumak taşıyan nöronların çevresinde kümelenirler. Kronik aktivasyon iltihap sinyalleri salar ve tau’nun yayılmasına katkıda bulunabilir.',
+    clinical: 'TREM2 gibi risk genleri mikrogliada etkilidir; bağışıklık yanıtını Alzheimer riskine bağlar.',
+  },
+}
+
 export function getRegions(lang: Lang) {
   if (lang !== 'tr') return REGIONS
   return Object.fromEntries(
@@ -134,7 +230,7 @@ export function getRegions(lang: Lang) {
 export function getCells(lang: Lang) {
   if (lang !== 'tr') return CELL_PARTS
   return Object.fromEntries(
-    Object.entries(CELL_PARTS).map(([id, c]) => [id, { ...c, ...(TR_CELLS[id] ?? {}) }]),
+    Object.entries(CELL_PARTS).map(([id, c]) => [id, { ...c, ...(TR_CELLS[id] ?? {}), ...(TR_CELLS_EXTRA[id] ?? {}) }]),
   ) as typeof CELL_PARTS
 }
 
