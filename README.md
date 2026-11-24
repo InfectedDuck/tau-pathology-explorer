@@ -1,70 +1,145 @@
 # Tau Pathology Explorer
 
-Interactive 3D teaching app: tau tangles → neuron → tissue → whole brain in Alzheimer's.
+**Live:** https://tau-pathology-explorer.vercel.app
 
-## Run frontend (offline-first)
+Interactive 3D teaching app: how tau tangles disrupt a neuron, the tissue
+around it and the whole brain in Alzheimer's disease. Three boxes show three
+scales, and one timeline (Braak 0 → V–VI) drives all of them.
+
+## What you see
+
+| Box | Scale | Models |
+| --- | --- | --- |
+| 01 Neuron | Three zoom levels: whole cell (µm) → inside the axon (nm) → molecules (Å) | A real human CA1 pyramidal neuron; a to-scale axon and synapse cutaway; the microtubule lattice, tau on the microtubule and the Alzheimer tau filament built from cryo-EM structures |
+| 02 Tissue | A slab of hippocampal CA1 | 48 neurons from three real reconstructions, plus real astrocyte and microglia shapes |
+| 03 Brain | Whole brain | 262-structure anatomical atlas, with optional vessels, fibre tracts and cranial nerves |
+
+Model sources and licences are listed in the app (Menu → Model credits) and in
+[public/models/ATTRIBUTION.md](public/models/ATTRIBUTION.md).
+
+## Using the viewer
+
+- Drag to rotate, scroll or pinch to zoom, right-drag or two fingers to pan,
+  double-click or double-tap to zoom to a point.
+- Every box has a row of part chips and labels pinned to the model. Tap one
+  to fly the camera there and open its explainer.
+- Tools on the right edge of each box: zoom in/out, reset, labels, layers,
+  save image, expand.
+- Box 1 has a Cell / Axon / Molecules switch. Box 3 has Cutaway / Glass /
+  Surface views and a layers menu.
+- The explainer offers the next zoom step where there is one (brain → tissue →
+  neuron → axon → molecules).
+- Phones show one box at a time with tabs; wide screens show all three.
+- Keys: `1`–`4` stage, `Space` play/pause, `C` compare with healthy, `Esc`
+  close.
+
+Also included: guided tour, five-question quiz with "See in 3D" links,
+compare-with-healthy split view, English and Turkish, dark and light themes,
+glossary tooltips, storyboard export, caption editor, references, shareable
+URLs (`?stage=2&box=brain&view=glass&sel=brainRegion:hippocampus`).
+
+## Run
+
 ```bash
 npm install
-npm run dev
-# build
-npm run build
+npm run dev      # http://localhost:5173
+npm run build    # → dist/
+npm run preview
 ```
 
-Theme persists in localStorage. Set `VITE_API_URL` to use backend, otherwise local `src/data/*` is used.
+Requires Node 22 or newer.
 
-Copy `.env.example` → `.env` to point at FastAPI:
-```
-VITE_API_URL=http://localhost:8000
+## Tests and lint
+
+```bash
+npm run test     # vitest
+npm run lint     # oxlint
+cd backend && python -m pytest tests/ -q
 ```
 
-## Run optional backend
+`.github/workflows/ci.yml` runs all of these plus the build.
+
+## Deploy
+
+### Vercel
+
+The repository is ready for Vercel: `vercel.json` sets the build command,
+output directory and cache headers, and `.vercelignore` keeps the backend and
+model sources out of the upload.
+
+```bash
+npx vercel          # preview deployment
+npx vercel --prod   # production deployment
+```
+
+The folder is linked to the Vercel project `tau-pathology-explorer`; `npx vercel
+--prod` publishes the current source to the live URL above.
+
+The site is static and needs no environment variables.
+
+### Docker
+
+```bash
+docker build -f Dockerfile.frontend -t tau-explorer .
+docker run -p 8080:80 tau-explorer
+```
+
+The image serves `nginx.conf` with an SPA fallback. `docker compose --profile
+prod up --build` starts the frontend together with the optional API.
+
+## Optional backend
+
+The app works without a server. A small FastAPI service can store shared
+caption edits, quiz attempts and progress:
+
 ```bash
 cd backend
 pip install -r requirements.txt
 uvicorn main:app --reload --port 8000
-# or
-docker compose up --build
 ```
 
-Endpoints: `/health`, `/api/stages`, `/api/regions` (8 regions), `/api/cell-parts`, `/api/quiz`, `/api/progress`, `/api/quiz-attempts`, `/api/content` (GET/POST). Frontend `src/data/*` is canonical and mirrored verbatim by the API; `backend/tests/test_content.py` guards against drift.
+Point the frontend at it with `VITE_API_URL=http://localhost:8000` (copy
+`.env.example` to `.env`), or at container start with
+`docker run -e VITE_API_URL=…`.
 
-## Features
-- 3 synced R3F canvases, OrbitControls + Reset + PNG snapshot, lazy-loaded, Stars + shadows + Bloom/Vignette
-- Smooth cinematic stage interpolation (no snapping) via `useSmoothStage`
-- Timeline 0-3 (Braak 0, I-II, III-IV, V-VI) + Play/Pause/Speed, keys 1-4 / Space / C
-- Clickable tau/microtubule/synapse/mito/tangle + 8 brain regions (incl. amygdala, thalamus, hypothalamus) → side panel (merged content)
-- Region isolate mode (dims the rest when a region is selected, toggleable) + camera focus (orbit pivot + per-region distance ease toward the selected region), legend hover/focus/tap lights up matching 3D structures, first-run coachmark hint
-- Guided tour (4 steps, each auto-selects its 3D hotspot; arrow keys page, progress bar) + 5-Q quiz (each question has a "See in 3D" jump; per-language best, retry-missed mode) with API persistence, dark/light, Okabe-Ito palette, Esc to close, focus trap, aria-live stage announcer, reduced-motion respected
-- Tissue toggles, live healthy counter (illustrative, shared helper in `src/data/tissueStats.ts`)
-- Compare mode = two synced brains (compact on mobile, responsive 1-col)
-- Shareable URLs: `?stage=2&compare=1&theme=dark&bloom=1&quality=high&lang=en&sel=brainRegion:hippocampus` + Share button copies link
-- FPS badge + auto-Eco with hysteresis (drops after 3s <28fps, restores after 5s ≥45fps); offscreen canvases pause rendering (mobile defaults to Eco, no bloom)
-- Professor mode: Edit button edits stage captions (localStorage + JSON export/import + POST /api/content with pull + length guard); shared server content merges once at boot (local edits win), Refs button shows 5 key papers
-- Glossary: dotted-underline jargon (Braak, p-tau, FDG-PET, …) with hover/focus definitions in EN + TR
-- Storyboard button captures all 4 stages (~6s, cycles timeline) to `tau-storyboard.html` with embedded PNGs + captions for lectures
+Endpoints: `/health`, `/api/stages`, `/api/regions`, `/api/cell-parts`,
+`/api/quiz`, `/api/progress`, `/api/quiz-attempts`, `/api/content`.
+`src/data/*` is the canonical content; `backend/main.py` mirrors it and the
+contract tests on both sides catch drift.
 
-## Tests + CI
+## Project layout
+
+```
+src/
+  components/
+    viewer/     the box: 3D stage, camera rig, part labels, tools
+    neuron/     Box 1 — cell, axon and molecule scenes
+    tissue/     Box 2
+    brain/      Box 3
+    ui/         header, timeline, explainer, tour, quiz, dialogs
+  lib/          branch-tree → tube meshes, materials, molecule helpers
+  data/         stages, regions, parts, quiz, tour, credits
+  i18n/         English and Turkish
+public/models/  the 3D assets the app loads (see ATTRIBUTION.md)
+scripts/        builds public/models from the sources in models-src/
+backend/        optional FastAPI service
+```
+
+## Rebuilding the 3D assets
+
 ```bash
-npm run test # vitest (content contract + hooks)
-npm run lint
-cd backend && python -m pytest tests/ -q
+python scripts/build_models.py
+node scripts/split_brain_atlas.mjs models-src/brain-atlas-full.glb public/models/brain-atlas
 ```
-`.github/workflows/ci.yml` runs web lint/test/build + backend pytest.
 
-## Deploy
-```bash
-# static
-npm run build # → dist/
-docker build -f Dockerfile.frontend -t tau-explorer .
-docker run -p 8080:80 tau-explorer
-```
-The image serves `nginx.conf` with SPA fallback (`try_files … /index.html`),
-so shareable deep links keep working on refresh. Hashed `/assets/*` cache for
-30 days; `index.html` is never cached. Backend URL resolution:
-build-time `VITE_API_URL` by default, overridable at container start without
-rebuilding via `docker run -p 8080:80 -e VITE_API_URL=http://api:8000 …`
-(entrypoint regenerates `/env.js`; `src/data/api.ts` prefers it).
-`docker compose` sets `restart: unless-stopped`, an `/health`-based healthcheck on the API,
-and picks up `.env` for the dev server when present. For a production-like stack
-(built nginx frontend + API with health-gated startup):
-`docker compose --profile prod up --build`, then open http://localhost:8080.
+The first needs Python 3.10+ and numpy and downloads its inputs from
+NeuroMorpho.Org and the RCSB PDB on first run. The second needs the packages
+named at the top of the script.
+
+## Performance
+
+Quality starts at High. After a short warm-up, if the frame rate stays under
+28 fps for three seconds the app drops to Eco (lower resolution and mesh
+detail, glow off) and tries High again once things run at 45 fps or more.
+These automatic changes are not saved; a choice made in the menu is.
+Offscreen boxes stop rendering.

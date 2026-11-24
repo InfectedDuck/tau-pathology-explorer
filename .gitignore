@@ -22,3 +22,11 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Local artefacts
+.vercel
+.backup
+__pycache__
+.pytest_cache
+.env*
+!.env.example
