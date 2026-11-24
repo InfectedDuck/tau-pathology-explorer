@@ -4,6 +4,12 @@ export type StageIndex = 0 | 1 | 2 | 3
 export type SelectedKind = 'cellPart' | 'brainRegion' | null
 /** Legend-linked 3D highlight, set on legend hover/focus/tap. */
 export type HighlightKey = 'healthy' | 'early' | 'tangle' | 'transport'
+/** The three scale boxes. */
+export type BoxId = 'neuron' | 'tissue' | 'brain'
+/** Zoom levels inside the neuron box: whole cell -> inside the axon -> molecules. */
+export type NeuronLevel = 'cell' | 'axon' | 'molecule'
+export type BrainView = 'glass' | 'whole' | 'cutaway'
+export type BrainLayer = 'hindbrain' | 'ventricles' | 'vessels' | 'tracts' | 'nerves'
 
 export interface Selection {
   kind: Exclude<SelectedKind, null>
@@ -35,8 +41,21 @@ interface AppState {
   showTangles: boolean
   showSynapses: boolean
   toggleTissue: (key: 'showNeurons' | 'showGlia' | 'showTangles' | 'showSynapses') => void
-  showBrainLabels: boolean
-  setShowBrainLabels: (v: boolean) => void
+  /** In-scene part labels, all boxes. */
+  showLabels: boolean
+  setShowLabels: (v: boolean) => void
+  /** Box shown on its own (phones always; desktop when `expanded`). */
+  activeBox: BoxId
+  setActiveBox: (b: BoxId) => void
+  /** Desktop: one box fills the stage instead of the three-up grid. */
+  expanded: boolean
+  setExpanded: (v: boolean) => void
+  neuronLevel: NeuronLevel
+  setNeuronLevel: (l: NeuronLevel) => void
+  brainView: BrainView
+  setBrainView: (v: BrainView) => void
+  brainLayers: Record<BrainLayer, boolean>
+  toggleBrainLayer: (l: BrainLayer) => void
   tourOpen: boolean
   setTourOpen: (open: boolean) => void
   tourStep: number
@@ -44,13 +63,18 @@ interface AppState {
   quizOpen: boolean
   setQuizOpen: (open: boolean) => void
   bloom: boolean
-  setBloom: (b: boolean) => void
+  /** `remember: false` for automatic changes, so they are not stored as the user's preference */
+  setBloom: (b: boolean, remember?: boolean) => void
   quality: 'high' | 'low'
-  setQuality: (q: 'high' | 'low') => void
+  setQuality: (q: 'high' | 'low', remember?: boolean) => void
   editorOpen: boolean
   setEditorOpen: (open: boolean) => void
   refsOpen: boolean
   setRefsOpen: (open: boolean) => void
+  creditsOpen: boolean
+  setCreditsOpen: (open: boolean) => void
+  menuOpen: boolean
+  setMenuOpen: (open: boolean) => void
   overrides: Record<string, string>
   setOverride: (key: string, value: string) => void
   resetOverrides: () => void
@@ -110,8 +134,9 @@ function initialQuality(): 'high' | 'low' {
     const saved = localStorage.getItem('tau-quality')
     if (saved === 'high' || saved === 'low') return saved
   } catch { /* ignore */ }
-  // Mobile GPUs: start in Eco (no shadows/bloom/transmission) to avoid jank.
-  return isMobileDevice() ? 'low' : 'high'
+  // One box is on screen at a time on phones, so start at full quality; the
+  // frame-rate watchdog (hooks/useAutoQuality) falls back to Eco if needed.
+  return 'high'
 }
 
 export const useAppStore = create<AppState>((set) => ({
@@ -145,8 +170,18 @@ export const useAppStore = create<AppState>((set) => ({
   showTangles: true,
   showSynapses: true,
   toggleTissue: (key) => set((s) => ({ [key]: !s[key] } as Partial<AppState>)),
-  showBrainLabels: true,
-  setShowBrainLabels: (showBrainLabels) => set({ showBrainLabels }),
+  showLabels: true,
+  setShowLabels: (showLabels) => set({ showLabels }),
+  activeBox: 'neuron',
+  setActiveBox: (activeBox) => set({ activeBox }),
+  expanded: false,
+  setExpanded: (expanded) => set({ expanded }),
+  neuronLevel: 'cell',
+  setNeuronLevel: (neuronLevel) => set({ neuronLevel }),
+  brainView: 'cutaway',
+  setBrainView: (brainView) => set({ brainView }),
+  brainLayers: { hindbrain: true, ventricles: true, vessels: false, tracts: false, nerves: false },
+  toggleBrainLayer: (l) => set((s) => ({ brainLayers: { ...s.brainLayers, [l]: !s.brainLayers[l] } })),
   tourOpen: false,
   setTourOpen: (tourOpen) => set({ tourOpen }),
   tourStep: 0,
@@ -154,19 +189,23 @@ export const useAppStore = create<AppState>((set) => ({
   quizOpen: false,
   setQuizOpen: (quizOpen) => set({ quizOpen }),
   bloom: initialBloom(),
-  setBloom: (bloom) => {
-    try { localStorage.setItem('tau-bloom', bloom ? '1' : '0') } catch { /* ignore */ }
+  setBloom: (bloom, remember = true) => {
+    if (remember) try { localStorage.setItem('tau-bloom', bloom ? '1' : '0') } catch { /* ignore */ }
     set({ bloom })
   },
   quality: initialQuality(),
-  setQuality: (quality) => {
-    try { localStorage.setItem('tau-quality', quality) } catch { /* ignore */ }
+  setQuality: (quality, remember = true) => {
+    if (remember) try { localStorage.setItem('tau-quality', quality) } catch { /* ignore */ }
     set({ quality })
   },
   editorOpen: false,
   setEditorOpen: (editorOpen) => set({ editorOpen }),
   refsOpen: false,
   setRefsOpen: (refsOpen) => set({ refsOpen }),
+  creditsOpen: false,
+  setCreditsOpen: (creditsOpen) => set({ creditsOpen }),
+  menuOpen: false,
+  setMenuOpen: (menuOpen) => set({ menuOpen }),
   overrides: loadOverrides(),
   setOverride: (key, value) =>
     set((s) => {
