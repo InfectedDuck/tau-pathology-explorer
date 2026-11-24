@@ -1,28 +1,39 @@
-import { Brain, Contrast, GitCompareArrows, GraduationCap, Link2, Map, Moon, Sparkles, Sun, Gauge, Check, Pencil, BookOpen, Clapperboard, Languages, MoreHorizontal } from 'lucide-react'
-import { useState } from 'react'
+import {
+  BookOpen, Brain, Check, Clapperboard, Database, Gauge, GitCompareArrows, GraduationCap, Languages, Link2, Map, Menu as MenuIcon, Moon, Pencil, Sparkles, Sun, X,
+} from 'lucide-react'
+import { useEffect, useState } from 'react'
 import { shareUrl } from '../../hooks/useDeepLinks'
 import { useMergedContent } from '../../hooks/useMergedContent'
-import { TOUR } from '../../data/tour'
-import { buildStoryboardHtml, captureAllStages, downloadHtml } from '../../hooks/useStoryboard'
 import { useT } from '../../hooks/useT'
+import { getTour } from '../../i18n/content'
+import { buildStoryboardHtml, captureAllStages, downloadHtml } from '../../hooks/useStoryboard'
 import { useAppStore } from '../../store/useAppStore'
+import { BoxTabs } from './BoxTabs'
+import { FpsBadge } from './FpsBadge'
+import { Legend } from './Legend'
 
-const BTN = 'inline-flex items-center justify-center gap-1.5 text-xs px-3.5 rounded-lg glass active:scale-95'
-
-export function Header() {
-  const { theme, toggleTheme, compare, setCompare, setTourOpen, setTourStep, setQuizOpen, bloom, setBloom, quality, setQuality, setEditorOpen, setRefsOpen, lang, setLang } = useAppStore()
+export function Header({ wide, fps }: { wide: boolean; fps: number }) {
+  const {
+    theme, toggleTheme, compare, setCompare, setTourOpen, setTourStep, setQuizOpen, bloom, setBloom, quality, setQuality,
+    setEditorOpen, setRefsOpen, setCreditsOpen, lang, setLang, menuOpen, setMenuOpen, expanded,
+  } = useAppStore()
   const { t } = useT()
   const [copied, setCopied] = useState(false)
   const [boarding, setBoarding] = useState(0)
   const { mergedStages } = useMergedContent()
 
   const share = async () => {
+    const url = shareUrl()
     try {
-      await navigator.clipboard.writeText(shareUrl())
+      if (!wide && typeof navigator.share === 'function') {
+        await navigator.share({ title: 'Tau Pathology Explorer', url })
+        return
+      }
+      await navigator.clipboard.writeText(url)
       setCopied(true)
       window.setTimeout(() => setCopied(false), 1600)
-    } catch {
-      window.prompt('Copy link:', shareUrl())
+    } catch (err) {
+      if ((err as { name?: string })?.name !== 'AbortError') window.prompt('Copy link:', url)
     }
   }
 
@@ -31,89 +42,148 @@ export function Header() {
     setBoarding(1)
     try {
       const shots = await captureAllStages(useAppStore.getState().setStage, (done) => setBoarding(done))
-      const html = buildStoryboardHtml(shots, mergedStages)
-      downloadHtml('tau-storyboard.html', html)
+      downloadHtml('tau-storyboard.html', buildStoryboardHtml(shots, mergedStages))
     } finally {
       setBoarding(0)
     }
   }
 
-  const secondary = (
-    <>
-      <button type="button" onClick={() => setLang(lang === 'en' ? 'tr' : 'en')} aria-pressed={lang === 'tr'} title="Dil / Language" className={BTN} style={{ minHeight: 44 }}>
-        <Languages size={15} aria-hidden /> {lang === 'en' ? 'TR' : 'EN'}
-      </button>
-      <button type="button" onClick={() => setBloom(!bloom)} aria-pressed={bloom} title="Toggle glow postprocessing" className={BTN} style={{ minHeight: 44 }}>
-        <Sparkles size={15} aria-hidden /> {bloom ? t('glowOn') : t('glowOff')}
-      </button>
-      <button type="button" onClick={() => setQuality(quality === 'high' ? 'low' : 'high')} aria-pressed={quality === 'high'} title="Toggle render quality" className={BTN} style={{ minHeight: 44 }}>
-        <Gauge size={15} aria-hidden /> {quality === 'high' ? 'High' : 'Eco'}
-      </button>
-      <button type="button" onClick={share} title="Copy shareable link to this exact view" className={BTN} style={{ minHeight: 44 }}>
-        {copied ? <Check size={15} aria-hidden /> : <Link2 size={15} aria-hidden />} {copied ? t('copied') : t('share')}
-      </button>
-      <button type="button" onClick={storyboard} disabled={boarding > 0} title="Capture all 4 stages to a lecture HTML file" className={`${BTN} disabled:opacity-60`} style={{ minHeight: 44 }}>
-        <Clapperboard size={15} aria-hidden /> {boarding > 0 ? t('capturing')(boarding) : t('storyboard')}
-      </button>
-      <button type="button" onClick={() => setEditorOpen(true)} title="Professor mode: edit captions" className={BTN} style={{ minHeight: 44 }}>
-        <Pencil size={15} aria-hidden /> {t('edit')}
-      </button>
-      <button type="button" onClick={() => setRefsOpen(true)} title="References" className={BTN} style={{ minHeight: 44 }}>
-        <BookOpen size={15} aria-hidden /> {t('refs')}
-      </button>
-    </>
-  )
+  const startTour = () => {
+    const s = useAppStore.getState()
+    const first = getTour(lang)[0]
+    setTourStep(0)
+    s.setPlaying(false)
+    s.setStage(first.stage)
+    s.setSelection(first.sel)
+    setTourOpen(true)
+    setMenuOpen(false)
+  }
+
+  // close the menu on Escape / outside press
+  useEffect(() => {
+    if (!menuOpen) return
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setMenuOpen(false)
+    }
+    const onDown = (e: PointerEvent) => {
+      if (!(e.target as HTMLElement).closest?.('[data-menu]')) setMenuOpen(false)
+    }
+    window.addEventListener('keydown', onKey)
+    window.addEventListener('pointerdown', onDown)
+    return () => {
+      window.removeEventListener('keydown', onKey)
+      window.removeEventListener('pointerdown', onDown)
+    }
+  }, [menuOpen, setMenuOpen])
+
+  const close = (fn: () => void) => () => {
+    fn()
+    setMenuOpen(false)
+  }
 
   return (
-    <header className="flex flex-wrap items-center justify-between gap-3 px-4 md:px-6 py-3 md:py-4">
-      <div className="flex items-center gap-3 min-h-[44px]">
-        <div className="w-10 h-10 rounded-xl grid place-items-center shrink-0" style={{ background: 'linear-gradient(135deg,#0e7490,#22d3ee)' }} aria-hidden>
-          <Brain color="white" size={22} />
+    <header className="app-header">
+      <div className="brand">
+        <div className="brand-mark" aria-hidden>
+          <Brain size={20} />
         </div>
-        <div>
-          <h1 className="text-base md:text-xl font-bold tracking-tight leading-none">Tau Pathology Explorer</h1>
-          <p className="text-xs md:text-sm opacity-70">{t('subtitle')}</p>
+        <div className="min-w-0">
+          <h1>Tau Pathology Explorer</h1>
+          <p>{t('subtitle')}</p>
         </div>
       </div>
-      {/* primary actions — always visible, thumb-sized */}
-      <div className="flex flex-wrap items-center gap-2">
-        <button
-          type="button"
-          onClick={() => { setTourStep(0); useAppStore.getState().setSelection(TOUR[0].sel); setTourOpen(true) }}
-          className="inline-flex items-center justify-center gap-1.5 text-xs px-3.5 rounded-lg text-white active:scale-95"
-          style={{ background: '#0e7490', minHeight: 44 }}
-        >
+
+      {wide && (expanded ? <BoxTabs inline /> : <div className="hidden min-[1500px]:block"><Legend /></div>)}
+
+      <div className="actions">
+        {wide && <FpsBadge fps={fps} />}
+        <button type="button" className="btn btn-primary" onClick={startTour}>
           <Map size={15} aria-hidden /> {t('tour')}
         </button>
-        <button type="button" onClick={() => setQuizOpen(true)} className={BTN} style={{ minHeight: 44 }}>
-          <GraduationCap size={15} aria-hidden /> {t('quiz')}
+        {wide && (
+          <>
+            <button type="button" className="btn" onClick={() => setQuizOpen(true)}>
+              <GraduationCap size={15} aria-hidden /> {t('quiz')}
+            </button>
+            <button type="button" className="btn" aria-pressed={compare} title={t('compare')} onClick={() => setCompare(!compare)}>
+              <GitCompareArrows size={15} aria-hidden /> <span className="hidden min-[1240px]:inline">{t('compare')}</span>
+            </button>
+            <button type="button" className="btn btn-icon" aria-label={t('share')} title={t('share')} onClick={share}>
+              {copied ? <Check size={16} aria-hidden /> : <Link2 size={16} aria-hidden />}
+            </button>
+            <button type="button" className="btn btn-icon" aria-label={t('language')} title={t('language')} onClick={() => setLang(lang === 'en' ? 'tr' : 'en')}>
+              <span className="text-[11.5px] font-bold">{lang === 'en' ? 'TR' : 'EN'}</span>
+            </button>
+            <button type="button" className="btn btn-icon" aria-label={t('theme')} title={t('theme')} onClick={toggleTheme}>
+              {theme === 'dark' ? <Sun size={16} aria-hidden /> : <Moon size={16} aria-hidden />}
+            </button>
+          </>
+        )}
+        <button
+          type="button"
+          className="btn btn-icon"
+          data-menu
+          aria-label={t('menu')}
+          aria-expanded={menuOpen}
+          onClick={() => setMenuOpen(!menuOpen)}
+        >
+          {menuOpen ? <X size={17} aria-hidden /> : <MenuIcon size={17} aria-hidden />}
         </button>
-        <button type="button" onClick={() => setCompare(!compare)} aria-pressed={compare} className={BTN} style={{ minHeight: 44 }}>
-          <GitCompareArrows size={15} aria-hidden /> {compare ? t('compareOn') : t('compareOff')}
-        </button>
-        <button type="button" onClick={toggleTheme} aria-label="Toggle dark and light theme" className={BTN} style={{ minHeight: 44 }}>
-          {theme === 'dark' ? <Sun size={15} aria-hidden /> : <Moon size={15} aria-hidden />}
-          {theme === 'dark' ? 'Light' : 'Dark'}
-          <Contrast size={12} aria-hidden className="opacity-60" />
-        </button>
-        {/* desktop: all actions inline */}
-        <div className="hidden sm:flex flex-wrap items-center gap-2">
-          {secondary}
-        </div>
-        {/* mobile: secondary actions collapse into a disclosure so the header stays 2 rows */}
-        <details className="sm:hidden group">
-          <summary
-            aria-label="More actions"
-            className="inline-flex items-center justify-center gap-1.5 text-xs px-3.5 rounded-lg glass cursor-pointer active:scale-95 list-none [&::-webkit-details-marker]:hidden"
-            style={{ minHeight: 44, minWidth: 44 }}
-          >
-            <MoreHorizontal size={16} aria-hidden /> More
-          </summary>
-          <div className="fixed inset-x-3 bottom-3 z-50 glass rounded-2xl p-3 grid grid-cols-2 gap-2 shadow-2xl open:block">
-            {secondary}
-          </div>
-        </details>
       </div>
+
+      {menuOpen && (
+        <>
+          {!wide && <div className="menu-scrim" aria-hidden />}
+          <div className={wide ? 'menu menu-pop' : 'menu menu-sheet'} data-menu role="menu" aria-label={t('menu')}>
+            {!wide && <div className="sheet-handle" aria-hidden />}
+            {!wide && (
+              <>
+                <button type="button" role="menuitem" className="menu-item" onClick={close(() => setQuizOpen(true))}>
+                  <GraduationCap size={17} aria-hidden /> {t('quiz')}
+                </button>
+                <button type="button" role="menuitemcheckbox" aria-checked={compare} className="menu-item" onClick={close(() => setCompare(!compare))}>
+                  <GitCompareArrows size={17} aria-hidden /> {t('compare')} <small>{compare ? 'On' : 'Off'}</small>
+                </button>
+                <button type="button" role="menuitem" className="menu-item" onClick={share}>
+                  {copied ? <Check size={17} aria-hidden /> : <Link2 size={17} aria-hidden />} {copied ? t('copied') : t('share')}
+                </button>
+                <button type="button" role="menuitem" className="menu-item" onClick={() => setLang(lang === 'en' ? 'tr' : 'en')}>
+                  <Languages size={17} aria-hidden /> {t('language')} <small>{lang === 'en' ? 'English' : 'Türkçe'}</small>
+                </button>
+                <button type="button" role="menuitem" className="menu-item" onClick={toggleTheme}>
+                  {theme === 'dark' ? <Moon size={17} aria-hidden /> : <Sun size={17} aria-hidden />} {t('theme')} <small>{theme === 'dark' ? t('themeDark') : t('themeLight')}</small>
+                </button>
+                <hr />
+              </>
+            )}
+            <button type="button" role="menuitemcheckbox" aria-checked={quality === 'high'} className="menu-item" onClick={() => setQuality(quality === 'high' ? 'low' : 'high')}>
+              <Gauge size={17} aria-hidden /> {t('quality')} <small>{quality === 'high' ? t('qualityHigh') : t('qualityEco')}</small>
+            </button>
+            <button type="button" role="menuitemcheckbox" aria-checked={bloom} className="menu-item" onClick={() => setBloom(!bloom)}>
+              <Sparkles size={17} aria-hidden /> {t('glow')} <small>{bloom ? 'On' : 'Off'}</small>
+            </button>
+            <hr />
+            <button type="button" role="menuitem" className="menu-item" disabled={boarding > 0} onClick={storyboard}>
+              <Clapperboard size={17} aria-hidden /> {boarding > 0 ? t('capturing')(boarding) : t('storyboard')}
+            </button>
+            <button type="button" role="menuitem" className="menu-item" onClick={close(() => setEditorOpen(true))}>
+              <Pencil size={17} aria-hidden /> {t('edit')}
+            </button>
+            <button type="button" role="menuitem" className="menu-item" onClick={close(() => setRefsOpen(true))}>
+              <BookOpen size={17} aria-hidden /> {t('refsTitle')}
+            </button>
+            <button type="button" role="menuitem" className="menu-item" onClick={close(() => setCreditsOpen(true))}>
+              <Database size={17} aria-hidden /> {t('credits')}
+            </button>
+            {!wide && (
+              <>
+                <hr />
+                <div className="px-1 pt-1"><Legend /></div>
+              </>
+            )}
+          </div>
+        </>
+      )}
     </header>
   )
 }
