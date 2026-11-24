@@ -1,0 +1,40 @@
+services:
+  api:
+    build: ./backend
+    ports:
+      - "8000:8000"
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/health')\""]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+  web:
+    image: node:24-alpine
+    working_dir: /app
+    volumes:
+      - ./:/app
+    ports:
+      - "5173:5173"
+    command: sh -c "npm install && npm run dev -- --host"
+    restart: unless-stopped
+    env_file:
+      - path: .env
+        required: false
+  # Production-like stack: built frontend (nginx + SPA fallback) + API.
+  # Run: docker compose --profile prod up --build
+  # Then open http://localhost:8080 (VITE_API_URL defaults to the api service).
+  prod:
+    profiles: ["prod"]
+    build:
+      context: .
+      dockerfile: Dockerfile.frontend
+    ports:
+      - "8080:80"
+    environment:
+      - VITE_API_URL=http://localhost:8000
+    restart: unless-stopped
+    depends_on:
+      api:
+        condition: service_healthy
