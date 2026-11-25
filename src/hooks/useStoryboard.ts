@@ -1,4 +1,5 @@
 import { STAGES } from '../data/stages'
+import { PROJECT, authorLine } from '../data/team'
 
 export interface StageShot {
   stage: number
@@ -67,7 +68,7 @@ export function buildStoryboardHtml(
   <h1 style="font-family:sans-serif">Tau Pathology Explorer — Storyboard</h1>
   <p style="font-family:sans-serif;opacity:.7">Healthy → Early → Middle → Late. Images captured from live 3D views. For teaching, not clinical data.</p>
   ${rows}
-  <footer style="font-family:sans-serif;font-size:12px;opacity:.6">Generated ${new Date().toISOString()} • Braak I–VI: entorhinal → hippocampus → temporal → parietal → frontal</footer>
+  <footer style="font-family:sans-serif;font-size:12px;opacity:.6">${PROJECT.title} © ${PROJECT.year} ${authorLine('en')}, ${PROJECT.university} • Generated ${new Date().toISOString()} • Braak I–VI: entorhinal → hippocampus → temporal → parietal → frontal</footer>
   </body></html>`
 }
 

@@ -2,6 +2,16 @@
   "name": "neuron",
   "private": true,
   "version": "0.0.0",
+  "description": "Interactive 3D explorer of tau pathology in Alzheimer's disease, from molecules to the whole brain.",
+  "author": "Kelsingazin Alikhan",
+  "contributors": [
+    "Toktar Kametay"
+  ],
+  "homepage": "https://tau-pathology-explorer.vercel.app",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/InfectedDuck/tau-pathology-explorer.git"
+  },
   "type": "module",
   "scripts": {
     "dev": "vite",

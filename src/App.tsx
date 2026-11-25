@@ -11,6 +11,7 @@ import { ReferencesPanel } from './components/ui/ReferencesPanel'
 import { TimelineDock } from './components/ui/TimelineDock'
 import { api } from './data/api'
 import { boxForSelection, levelForPart } from './data/parts'
+import { PROJECT, authorLine } from './data/team'
 import { useAutoQuality } from './hooks/useAutoQuality'
 import { useDeepLinks } from './hooks/useDeepLinks'
 import { useWideLayout } from './hooks/useLayout'
@@ -141,7 +142,10 @@ export default function App() {
 
       {wide && (
         <footer className="app-foot">
-          <span>Teaching model: real cell shapes and protein structures, stylised disease progression. Not patient data.</span>
+          <span>
+            <b className="app-foot-team">© {PROJECT.year} {authorLine(lang)} · {PROJECT.university}</b>
+            <span className="hidden min-[1300px]:inline"> · Teaching model: real cell shapes and protein structures, stylised disease progression. Not patient data.</span>
+          </span>
           <button type="button" onClick={() => useAppStore.getState().setCreditsOpen(true)}>{t('credits')}</button>
         </footer>
       )}

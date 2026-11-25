@@ -1,14 +1,15 @@
 import { AnimatePresence, motion } from 'framer-motion'
-import { Database, X } from 'lucide-react'
+import { Database, GraduationCap, X } from 'lucide-react'
 import { MODEL_CREDITS, NEUROMORPHO_CITE } from '../../data/credits'
+import { PROJECT } from '../../data/team'
 import { useFocusTrap } from '../../hooks/useFocusTrap'
 import { useT } from '../../hooks/useT'
 import { useAppStore } from '../../store/useAppStore'
 
-/** Where every 3D model comes from, with the credit each licence asks for. */
+/** About the project: who made it, then where every 3D model comes from (with the credit each licence asks for). */
 export function CreditsPanel() {
   const { creditsOpen, setCreditsOpen } = useAppStore()
-  const { t } = useT()
+  const { t, lang } = useT()
   const trapRef = useFocusTrap<HTMLDivElement>(creditsOpen)
   return (
     <AnimatePresence>
@@ -21,7 +22,7 @@ export function CreditsPanel() {
           style={{ background: 'var(--scrim)', backdropFilter: 'blur(6px)' }}
           role="dialog"
           aria-modal="true"
-          aria-label={t('creditsTitle')}
+          aria-label={t('aboutTitle')}
           onClick={() => setCreditsOpen(false)}
           onKeyDown={(e) => {
             if (e.key === 'Escape') setCreditsOpen(false)
@@ -37,12 +38,38 @@ export function CreditsPanel() {
           >
             <div className="flex items-start justify-between gap-2">
               <h2 className="font-display text-lg font-semibold inline-flex items-center gap-2">
-                <Database size={17} aria-hidden /> {t('creditsTitle')}
+                <GraduationCap size={18} aria-hidden /> {t('aboutTitle')}
               </h2>
               <button type="button" aria-label={t('close')} onClick={() => setCreditsOpen(false)} className="btn btn-icon shrink-0">
                 <X size={17} aria-hidden />
               </button>
             </div>
+
+            <section className="field mt-3" aria-label={t('teamLabel')}>
+              <div className="font-display text-[16px] font-semibold">{PROJECT.title}</div>
+              <div className="text-xs mt-0.5" style={{ color: 'var(--muted)' }}>
+                {PROJECT.university} · {PROJECT.city} · {PROJECT.year}
+              </div>
+              <div className="field-label mt-3">{t('teamLabel')}</div>
+              <ul className="mt-1.5 space-y-1">
+                {PROJECT.members.map((m) => (
+                  <li key={m.name} className="flex flex-wrap items-baseline justify-between gap-x-3 text-[13.5px]">
+                    <b>{m.name}</b>
+                    <span className="text-xs" style={{ color: 'var(--muted)' }}>{m.role[lang]}</span>
+                  </li>
+                ))}
+              </ul>
+              <div className="text-[11.5px] mt-3 leading-relaxed" style={{ color: 'var(--muted)' }}>
+                © {PROJECT.year} {PROJECT.members[0].name} {t('andTeam')}, {PROJECT.university}.{' '}
+                <a href={PROJECT.repository} target="_blank" rel="noreferrer" className="underline" style={{ color: 'var(--accent)' }}>
+                  {t('sourceCode')}
+                </a>
+              </div>
+            </section>
+
+            <h3 className="font-display text-[15px] font-semibold inline-flex items-center gap-2 mt-5">
+              <Database size={15} aria-hidden /> {t('creditsTitle')}
+            </h3>
             <p className="text-xs mt-1.5 leading-relaxed" style={{ color: 'var(--muted)' }}>
               Cell shapes and molecular structures are real research data. How they are arranged, coloured and animated through
               the disease stages is a teaching model, not patient data; cell counts and percentages are illustrative. The axon

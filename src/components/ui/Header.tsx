@@ -1,10 +1,11 @@
 import {
-  BookOpen, Brain, Check, Clapperboard, Database, Gauge, GitCompareArrows, GraduationCap, Languages, Link2, Map, Menu as MenuIcon, Moon, Pencil, Sparkles, Sun, X,
+  BookOpen, Brain, Check, Clapperboard, Gauge, GitCompareArrows, GraduationCap, Info, Languages, Link2, Map, Menu as MenuIcon, Moon, Pencil, Sparkles, Sun, X,
 } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { shareUrl } from '../../hooks/useDeepLinks'
 import { useMergedContent } from '../../hooks/useMergedContent'
 import { useT } from '../../hooks/useT'
+import { PROJECT } from '../../data/team'
 import { getTour } from '../../i18n/content'
 import { buildStoryboardHtml, captureAllStages, downloadHtml } from '../../hooks/useStoryboard'
 import { useAppStore } from '../../store/useAppStore'
@@ -89,7 +90,7 @@ export function Header({ wide, fps }: { wide: boolean; fps: number }) {
         </div>
         <div className="min-w-0">
           <h1>Tau Pathology Explorer</h1>
-          <p>{t('subtitle')}</p>
+          <p>{PROJECT.university} · {t('subtitle')}</p>
         </div>
       </div>
 
@@ -173,7 +174,7 @@ export function Header({ wide, fps }: { wide: boolean; fps: number }) {
               <BookOpen size={17} aria-hidden /> {t('refsTitle')}
             </button>
             <button type="button" role="menuitem" className="menu-item" onClick={close(() => setCreditsOpen(true))}>
-              <Database size={17} aria-hidden /> {t('credits')}
+              <Info size={17} aria-hidden /> {t('credits')}
             </button>
             {!wide && (
               <>
