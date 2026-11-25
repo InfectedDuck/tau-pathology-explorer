@@ -1,0 +1,8 @@
+# Store text files with LF line endings; binary models stay as they are
+* text=auto eol=lf
+*.glb binary
+*.wasm binary
+*.png binary
+# third-party source data: keep byte-for-byte (some files mix line endings)
+*.swc -text
+*.pdb -text
