@@ -2,8 +2,8 @@
 
 **Live:** https://tau-pathology-explorer.vercel.app
 
-A project by **Kelsingazin Alikhan** and team, **Semey Medical University**
-(Semey, Kazakhstan), 2026.
+A project by **Erzhanuly Nursultan** and **Kelsingazin Alikhan**, **Semey Medical
+University** (Semey, Kazakhstan), 2026. Website by Toktar Kametay.
 
 Interactive 3D teaching app: how tau tangles disrupt a neuron, the tissue
 around it and the whole brain in Alzheimer's disease. Three boxes show three
@@ -151,21 +151,23 @@ Offscreen boxes stop rendering.
 
 | Name | Role |
 | --- | --- |
+| Erzhanuly Nursultan | Project author |
 | Kelsingazin Alikhan | Project author |
-| Toktar Kametay | Web development and 3D visualisation |
+| Toktar Kametay | Website development and 3D visualisation |
 
 Semey Medical University, Semey, Kazakhstan.
 
 To cite this project, use the "Cite this repository" button on GitHub (it reads
 [CITATION.cff](CITATION.cff)), or:
 
-> Kelsingazin A, Kametay T. *Tau Pathology Explorer: an interactive 3D model of
+> Erzhanuly N, Kelsingazin A. *Tau Pathology Explorer: an interactive 3D model of
 > tau pathology in Alzheimer's disease.* Semey Medical University; 2026.
 > https://tau-pathology-explorer.vercel.app
 
 ## Copyright
 
-Code and design © 2026 Kelsingazin Alikhan and team, Semey Medical University.
+© 2026 Erzhanuly Nursultan and Kelsingazin Alikhan, Semey Medical University.
+Website built by Toktar Kametay.
 The 3D model files in `public/models/` come from other authors and keep their
 own licences (CC BY 4.0, CC0 1.0 and CC BY-SA 4.0); they must stay credited as
 listed in [public/models/ATTRIBUTION.md](public/models/ATTRIBUTION.md) and in

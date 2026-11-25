@@ -3,11 +3,11 @@ message: "If you use this project, please cite it as below."
 title: "Tau Pathology Explorer: an interactive 3D model of tau pathology in Alzheimer's disease"
 type: software
 authors:
+  - family-names: Erzhanuly
+    given-names: Nursultan
+    affiliation: Semey Medical University
   - family-names: Kelsingazin
     given-names: Alikhan
-    affiliation: Semey Medical University
-  - family-names: Kametay
-    given-names: Toktar
     affiliation: Semey Medical University
 date-released: 2026-11-25
 url: "https://tau-pathology-explorer.vercel.app"

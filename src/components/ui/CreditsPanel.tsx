@@ -1,7 +1,7 @@
 import { AnimatePresence, motion } from 'framer-motion'
 import { Database, GraduationCap, X } from 'lucide-react'
 import { MODEL_CREDITS, NEUROMORPHO_CITE } from '../../data/credits'
-import { PROJECT } from '../../data/team'
+import { PROJECT, authorLine } from '../../data/team'
 import { useFocusTrap } from '../../hooks/useFocusTrap'
 import { useT } from '../../hooks/useT'
 import { useAppStore } from '../../store/useAppStore'
@@ -45,22 +45,26 @@ export function CreditsPanel() {
               </button>
             </div>
 
-            <section className="field mt-3" aria-label={t('teamLabel')}>
+            <section className="field mt-3" aria-label={t('authorsLabel')}>
               <div className="font-display text-[16px] font-semibold">{PROJECT.title}</div>
               <div className="text-xs mt-0.5" style={{ color: 'var(--muted)' }}>
                 {PROJECT.university} · {PROJECT.city} · {PROJECT.year}
               </div>
-              <div className="field-label mt-3">{t('teamLabel')}</div>
+              <div className="field-label mt-3">{t('authorsLabel')}</div>
               <ul className="mt-1.5 space-y-1">
-                {PROJECT.members.map((m) => (
-                  <li key={m.name} className="flex flex-wrap items-baseline justify-between gap-x-3 text-[13.5px]">
+                {PROJECT.authors.map((m) => (
+                  <li key={m.name} className="text-[13.5px]">
                     <b>{m.name}</b>
-                    <span className="text-xs" style={{ color: 'var(--muted)' }}>{m.role[lang]}</span>
                   </li>
                 ))}
               </ul>
+              <div className="field-label mt-3">{t('websiteLabel')}</div>
+              <div className="mt-1.5 flex flex-wrap items-baseline justify-between gap-x-3 text-[13.5px]">
+                <b>{PROJECT.website.name}</b>
+                <span className="text-xs" style={{ color: 'var(--muted)' }}>{PROJECT.website.role[lang]}</span>
+              </div>
               <div className="text-[11.5px] mt-3 leading-relaxed" style={{ color: 'var(--muted)' }}>
-                © {PROJECT.year} {PROJECT.members[0].name} {t('andTeam')}, {PROJECT.university}.{' '}
+                © {PROJECT.year} {authorLine(lang)}, {PROJECT.university}.{' '}
                 <a href={PROJECT.repository} target="_blank" rel="noreferrer" className="underline" style={{ color: 'var(--accent)' }}>
                   {t('sourceCode')}
                 </a>

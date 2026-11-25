@@ -3,9 +3,9 @@
   "private": true,
   "version": "0.0.0",
   "description": "Interactive 3D explorer of tau pathology in Alzheimer's disease, from molecules to the whole brain.",
-  "author": "Kelsingazin Alikhan",
+  "author": "Erzhanuly Nursultan and Kelsingazin Alikhan",
   "contributors": [
-    "Toktar Kametay"
+    "Toktar Kametay (website)"
   ],
   "homepage": "https://tau-pathology-explorer.vercel.app",
   "repository": {
