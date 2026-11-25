@@ -58,11 +58,6 @@ export function CreditsPanel() {
                   </li>
                 ))}
               </ul>
-              <div className="field-label mt-3">{t('websiteLabel')}</div>
-              <div className="mt-1.5 flex flex-wrap items-baseline justify-between gap-x-3 text-[13.5px]">
-                <b>{PROJECT.website.name}</b>
-                <span className="text-xs" style={{ color: 'var(--muted)' }}>{PROJECT.website.role[lang]}</span>
-              </div>
               <div className="text-[11.5px] mt-3 leading-relaxed" style={{ color: 'var(--muted)' }}>
                 © {PROJECT.year} {authorLine(lang)}, {PROJECT.university}.{' '}
                 <a href={PROJECT.repository} target="_blank" rel="noreferrer" className="underline" style={{ color: 'var(--accent)' }}>
@@ -70,6 +65,13 @@ export function CreditsPanel() {
                 </a>
               </div>
             </section>
+
+            {/* the website builder is not part of the university team, so this sits outside its box */}
+            <div className="mt-2.5 px-1 flex flex-wrap items-baseline gap-x-2 text-[12.5px]">
+              <span className="field-label">{t('websiteLabel')}</span>
+              <b>{PROJECT.website.name}</b>
+              <span className="text-xs" style={{ color: 'var(--muted)' }}>· {PROJECT.website.role[lang]}</span>
+            </div>
 
             <h3 className="font-display text-[15px] font-semibold inline-flex items-center gap-2 mt-5">
               <Database size={15} aria-hidden /> {t('creditsTitle')}

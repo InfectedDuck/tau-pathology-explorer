@@ -149,13 +149,10 @@ Offscreen boxes stop rendering.
 
 ## Authors
 
-| Name | Role |
-| --- | --- |
-| Erzhanuly Nursultan | Project author |
-| Kelsingazin Alikhan | Project author |
-| Toktar Kametay | Website development and 3D visualisation |
+Project authors: **Erzhanuly Nursultan** and **Kelsingazin Alikhan**, Semey
+Medical University, Semey, Kazakhstan.
 
-Semey Medical University, Semey, Kazakhstan.
+Website development and 3D visualisation: **Toktar Kametay**.
 
 To cite this project, use the "Cite this repository" button on GitHub (it reads
 [CITATION.cff](CITATION.cff)), or:
